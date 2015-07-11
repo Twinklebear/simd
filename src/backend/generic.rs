@@ -124,3 +124,33 @@ pub fn blend(a: &Vector, b: &Vector, mask: &Mask) -> Vector {
     c
 }
 
+#[test]
+fn test_add() {
+    let x = Vector::load([1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]);
+    let y = Vector::load([9.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0]);
+    let z = x + y;
+    assert_eq!(z[0], 10.0);
+    assert_eq!(z[1], 12.0);
+    assert_eq!(z[2], 14.0);
+    assert_eq!(z[3], 16.0);
+    assert_eq!(z[4], 18.0);
+    assert_eq!(z[5], 20.0);
+    assert_eq!(z[6], 22.0);
+    assert_eq!(z[7], 24.0);
+}
+
+#[test]
+fn test_mask_and() {
+    let x = Mask::load([true, false, true, false, true, false, true, false]);
+    let y = Mask::load([false, true, true, false, false, true, true, true]);
+    let z = x & y;
+    assert_eq!(z[0], false);
+    assert_eq!(z[1], false);
+    assert_eq!(z[2], true);
+    assert_eq!(z[3], false);
+    assert_eq!(z[4], false);
+    assert_eq!(z[5], false);
+    assert_eq!(z[6], true);
+    assert_eq!(z[7], false);
+}
+
