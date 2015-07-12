@@ -1,6 +1,6 @@
 SIMD
 ===
-Working on a compiler plugin to add [ISPC](http://ispc.github.io/) like code generation capabilities. The
+Working on a compiler plugin to add [ISPC](http://ispc.github.io/) like code generation capabilities to Rust. The
 goal is that you'll be able to write a function and tag it with a `#[simd]` annotation to have
 a vectorized version of it generated. The vectorized version will still be able to handle branching,
 looping and so on but conditional control flow will be handled by masking off vector lanes. You
