@@ -15,29 +15,48 @@ pub fn plugin_registrar(reg: &mut Registry) {
 
 fn simd<'a>(cx: &mut ExtCtxt<'a>, sp: Span, mi: &ast::MetaItem, orig_item: P<ast::Item>)
             -> P<ast::Item> {
-    println!("plugin runnin!");
-    println!("item: {:#?}", orig_item);
-    match orig_item.node {
-        ast::ItemFn(ref decl, _, _, _, _, ref block) => {
-            println!("Function statements:");
-            for i in &block.stmts {
-                println!("{:#?}", i);
-            }
-            if let Some(ref expr) = block.expr {
-                println!("Function has an expression");
-                println!("{:#?}", expr);
-                println!("node = {:#?}", expr.node);
-                match expr.node {
-                    ast::ExprBinary(ref op, ref l, ref r) => {
-                        println!("left = {:#?}", l.node);
-                        println!("right = {:#?}", r.node);
-                    },
-                    _ => {},
-                }
-            }
-        },
-        _ => {},
+    let supported = match orig_item.node {
+        ast::ItemFn(_, _, _, _, ref generics, _) => !generics.is_parameterized(),
+        _ => false,
+    };
+    if !supported {
+        cx.span_err(orig_item.span, "#[simd] not supported on this item");
+        return orig_item;
     }
-    orig_item
+
+    println!("item: {:#?}", orig_item);
+    orig_item.map(|item| {
+        let new_node = match item.node {
+            ast::ItemFn(decl, safety, constness, abi, generics, block) => {
+                println!("Function declaration:");
+                for a in &decl.inputs {
+                    println!("{:#?}", a);
+                }
+                println!("Return type = {:#?}", decl.output);
+                println!("\nFunction statements:");
+                for i in &block.stmts {
+                    println!("{:#?}", i);
+                }
+                if let Some(ref expr) = block.expr {
+                    println!("Function has an expression");
+                    println!("{:#?}", expr);
+                    println!("node = {:#?}", expr.node);
+                    match expr.node {
+                        ast::ExprBinary(ref op, ref l, ref r) => {
+                            println!("left = {:#?}", l.node);
+                            println!("right = {:#?}", r.node);
+                        },
+                        _ => {},
+                    }
+                }
+                ast::ItemFn(decl, safety, constness, abi, generics, block)
+            },
+            _ => unreachable!(),
+        };
+        ast::Item {
+            node: new_node,
+            .. item
+        }
+    })
 }
 
