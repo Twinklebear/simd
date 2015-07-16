@@ -31,6 +31,14 @@ fn simd<'a>(cx: &mut ExtCtxt<'a>, sp: Span, mi: &ast::MetaItem, orig_item: P<ast
                 println!("Function declaration:");
                 for a in &decl.inputs {
                     println!("{:#?}", a);
+                    println!("{:#?}", a.ty.node);
+                    match a.ty.node {
+                        ast::TyPath(_, ref p) => {
+                            println!("path = {:#?}", p);
+                            println!("segments = {:#?}", p.segments);
+                        },
+                        _ => {},
+                    }
                 }
                 println!("Return type = {:#?}", decl.output);
                 println!("\nFunction statements:");
