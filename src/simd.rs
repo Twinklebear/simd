@@ -44,6 +44,22 @@ fn simd<'a>(cx: &mut ExtCtxt<'a>, sp: Span, mi: &ast::MetaItem, orig_item: P<ast
                 println!("\nFunction statements:");
                 for i in &block.stmts {
                     println!("{:#?}", i);
+                    match i.node {
+                        ast::StmtDecl(ref decl, _) => {
+                            match decl.node {
+                                ast::DeclLocal(ref local) => {
+                                    match local.ty {
+                                        Some(ref ty) => println!("type {:#?}", ty),
+                                        None => println!("no type"),
+                                    }
+                                },
+                                ast::DeclItem(_) => {
+                                    println!("item decl");
+                                },
+                            }
+                        },
+                        _ => println!("other decl"),
+                    }
                 }
                 if let Some(ref expr) = block.expr {
                     println!("Function has an expression");
